@@ -1,9 +1,6 @@
 import { Container } from './styles';
 import Logo  from '../../assets/bemol-picture.jpg'
-
-interface HeaderProps {
-    backToHomeLink?: boolean;
-}
+import { HeaderProps } from '../../models/header-models'
 
 const Header = ({backToHomeLink} : HeaderProps) => {
     return (
