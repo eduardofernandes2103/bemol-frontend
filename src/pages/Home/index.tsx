@@ -1,6 +1,17 @@
+import Header from '../../components/Header'
+import BackImg from '../../assets/bemol-shop.jpg'
+import Container from './styles'
+
 const Home = () => {
     return (
-        <div>Home</div>
+        <div>
+            <Header />
+            <Container>
+                <div>
+                    <img src={BackImg} alt="" />
+                </div>
+            </Container>
+        </div>
     )
 }
 

@@ -1,8 +1,16 @@
 import { Container } from './styles';
 import Logo  from '../../assets/bemol-picture.jpg'
 import { HeaderProps } from '../../models/header-models'
+import Button from '../Button';
+import { useNavigate } from 'react-router-dom';
 
 const Header = ({backToHomeLink} : HeaderProps) => {
+    const navigate  = useNavigate()
+     
+    const handleNavigation = (path: string) => {
+        navigate(path)
+    }
+
     return (
         <Container>
             <div className='logoPlace'>
@@ -11,11 +19,19 @@ const Header = ({backToHomeLink} : HeaderProps) => {
 
             {
                 backToHomeLink ? (
-                    <div className='redirectPlace'>
-                        Voltar para Home
-                    </div>
+                    <Button 
+                        setSize='huge'
+                        setColor='#ffffff'
+                        setFontColor='#0192d5'
+                        click={() => handleNavigation("/")}
+                    >Início</Button>
                 ) : (
-                    <div></div>
+                    <Button 
+                        setSize='huge'
+                        setColor='#ffffff'
+                        setFontColor='#0192d5'
+                        click={() => handleNavigation("/signup")}
+                    >Cadastre-se</Button>
                 )
             }
         </Container>

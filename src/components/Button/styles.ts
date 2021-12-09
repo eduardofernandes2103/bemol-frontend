@@ -15,7 +15,7 @@ const MyButton = styled.button<ButtonProps>`
         else {return "30px"}
     }};
     background-color: ${props=>props.setColor};
-    color: white;
+    color: ${props => props.setFontColor};
     border: none;
     border-radius: 5px;
     margin: 5px;

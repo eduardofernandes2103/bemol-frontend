@@ -1,6 +1,10 @@
+import Header from '../../components/Header'
+
 const SignUp = () => {
     return (
-        <div>SignUp</div>
+        <div>
+            <Header backToHomeLink={true} />
+        </div>
     )
 }
 
