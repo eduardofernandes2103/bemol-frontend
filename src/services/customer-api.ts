@@ -1,7 +1,7 @@
 import axios from "axios";
 
-const customerAPI = axios.create({
+const customerApi = axios.create({
   baseURL:  "https://bemol-connection-heroku.herokuapp.com",
 });
 
-export default customerAPI;
+export default customerApi;
