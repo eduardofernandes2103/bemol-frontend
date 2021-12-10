@@ -2,8 +2,28 @@ import Button from '../../components/Button'
 import Header from '../../components/Header'
 import Container from './styles'
 import { useState } from 'react'
+import viaCepApi from '../../services/viacep-api'
 
 const SignUp = () => {
+    const [cep, setCep] = useState<string>('')
+    const [street, setStreet] = useState<string>('')
+    const [city, setCity] = useState<string>('')
+
+    const handleGenerateAddress = () => {
+        if(cep.length === 8 && typeof(Number(cep)) === typeof(0)){
+            viaCepApi
+                .get(`/ws/${cep}/json`)
+                .then((response) => {
+                    setStreet(response.data.logradouro)
+                    setCity(response.data.localidade)
+                })
+        }
+        if(cep.length !== 8){
+            setStreet('')
+            setCity('')
+        }
+    }
+
     return (
         <div>
             <Header backToHomeLink={true} />
@@ -31,18 +51,26 @@ const SignUp = () => {
                                 href='https://buscacepinter.correios.com.br/app/endereco/index.php?t'
                                 target="_blank"
                             >Buscar meu cep</a>
-                            <input placeholder='CEP (Apenas digitos)'/>
+                            <input 
+                                placeholder='CEP (Apenas digitos)'
+                                value={cep}
+                                onChange={(e) => setCep(e.target.value)}
+                                onKeyUp={handleGenerateAddress}
+                            />
                             <span>O Cep deve conter apenas<br />8 digitos</span>
-                            <Button 
-                                setColor='#c4c4c4'
-                                setFontColor='#000000'
-                                setSize='large'
-                            >Gerar Endereço</Button>
                             <div className="address">
-                                <input placeholder='Rua'/>
+                                <input 
+                                    placeholder='Rua'
+                                    value={street}
+                                    onChange={(e) => setStreet(e.target.value)}
+                                />
                                 <input placeholder='Número'/>
                                 <input placeholder='Complemento'/>
-                                <input placeholder='Cidade'/>
+                                <input 
+                                    placeholder='Cidade'
+                                    value={city}
+                                    onChange={(e) => setCity(e.target.value)}
+                                />
                             </div>
                         </div>
                     </div>

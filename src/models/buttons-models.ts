@@ -3,6 +3,6 @@ export interface ButtonProps {
     setColor: string;
     setSize: string;
     setFontColor: string;
-    type?: string;
-    click?: () => void
+    type?: "button" | "submit" | "reset";
+    click?: any
 }

@@ -1,7 +1,7 @@
 import MyButton from './styles'
 import {ButtonProps} from '../../models/buttons-models'
 
-const Button = ({children, setColor, setFontColor, setSize, click} : ButtonProps) => {
+const Button = ({children, setColor, setFontColor, type, setSize, click} : ButtonProps) => {
 
     return(
       <MyButton 
@@ -9,6 +9,7 @@ const Button = ({children, setColor, setFontColor, setSize, click} : ButtonProps
           onClick={click}
           setSize={setSize}
           setFontColor={setFontColor}
+          type={type}
         >{children}
       </MyButton>
     )

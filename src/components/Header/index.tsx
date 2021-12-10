@@ -14,7 +14,7 @@ const Header = ({backToHomeLink} : HeaderProps) => {
     return (
         <Container>
             <div className='logoPlace'>
-                <img src={Logo} />
+                <img src={Logo} alt="" />
             </div>
 
             {
