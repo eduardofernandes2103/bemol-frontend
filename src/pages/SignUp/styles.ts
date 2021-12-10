@@ -9,6 +9,11 @@ const Container = styled.div`
     height: 160vh;
     width: 100vw;
 
+    .opacityOn{
+        background: #c4c4c4;
+        opacity: 0.5;
+    }
+
     input{
         width: 12rem;
         height: 1.8rem;

@@ -1,10 +1,11 @@
+import AlertModal from '../../components/AlertModal'
 import Button from '../../components/Button'
 import Header from '../../components/Header'
 import Container from './styles'
-import { useState } from 'react'
-import viaCepApi from '../../services/viacep-api'
 import customerApi from '../../services/customer-api'
+import viaCepApi from '../../services/viacep-api'
 import * as yup from 'yup';
+import { useState } from 'react'
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm } from 'react-hook-form'
 import { SignupModel } from '../../models/signup-models'
@@ -13,12 +14,16 @@ import { useNavigate } from 'react-router-dom';
 
 const SignUp = () => {
     const navigate  = useNavigate()
-    const [zipcode, setZipcode] = useState<string>('')
-    const [street, setStreet] = useState<string>('')
     const [city, setCity] = useState<string>('')
+    const [street, setStreet] = useState<string>('')
+    const [zipcode, setZipcode] = useState<string>('')
+    const [modalTitle, setModalTitle] = useState<string>('')
+    const [modalSubTitle, setModalSubTitle] = useState<string>('')
+    const [backgroundClass, setBackgroundClass] = useState<string>("opacityOff")
+    const [modalIsOpen, setModalIsOpen] = useState<boolean>(false)
+    const [modalReload, setModalReload] = useState<boolean>(false)
 
     const formSchema = yup.object().shape({
-        
         name: yup
             .string()
             .required("Nome completo é obrigatório"),
@@ -59,14 +64,28 @@ const SignUp = () => {
         console.log("teste")
         customerApi
         .post("/customers", costumer)
-        .then((response) => console.log(response))
-        .then((_) => {
-            
-            return  navigate("/")
+        .then((response) => {
+            console.log(typeof(response.data.error))
+            if(typeof(response.data.error) !== typeof("string")){
+                setModalIsOpen(true)
+                setModalReload(false)
+                setModalTitle("Parabéns")
+                setModalSubTitle("seus dados foram cadastrados com sucesso!")
+                setBackgroundClass("opacityOn")
+                window.scrollTo(0, 0)
+            } else {
+                setModalIsOpen(true)
+                setModalReload(true)
+                setModalTitle("Atenção")
+                setModalSubTitle("O e-mail já foi cadastrado anteriormente")
+                setBackgroundClass("opacityOn")
+                window.scrollTo(0, 0)
+            }
         })
-        .catch((_)=> console.log("Algo não está certo, tente novamente!"))
+        .catch((_)=> {
+            console.log("Algo deu errado")
+        })
     }
-
 
     const handleGenerateAddress = () => {
         if(zipcode.length === 8 && typeof(Number(zipcode)) === typeof(0)){
@@ -83,95 +102,111 @@ const SignUp = () => {
         }
     }
 
+    const handleModalNavigation = (reload: boolean ) => {
+        if(reload){
+            document.location.reload()
+        } else {
+            navigate("/")
+        }
+    }
+
     return (
         <div>
             <Header backToHomeLink={true} />
             <Container>
-                <h1>Dados Cadastrais</h1>
-                <form onSubmit={handleSubmit(onSubFunction)}>
-                    <div className='PersonalData'>
-                        <h2>Dados Pessoais</h2>
-                        <div className='formPlaceOne'>
-                            <div className='emailPlace'>
-                                <input 
-                                    placeholder='Nome Completo'
-                                    {...register("name")}
-                                    name="name" 
-                                />
-                                <input 
-                                    placeholder='Email' 
-                                    {...register("email")}
-                                    name="email" 
-                                />
-                            </div>
-                            <div className='passwordPlace'>
-                                <input 
-                                     type="password" 
-                                    placeholder='Senha'
-                                    {...register("password_hash")}
-                                    name="password_hash" 
-                                />
-                                <input 
-                                    type="password" 
-                                    placeholder='Confirme sua senha'
-                                    {...register("passwordConfirm")}
-                                    name="passwordConfirm" 
-                                />
-                                <span>A senha com pelo menos<br />8 caracteres</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div className='AddressData'>
-                        <h2>Endereço</h2>
-                        <div className='formPlaceTwo'>
-                            <a 
-                                href='https://buscacepinter.correios.com.br/app/endereco/index.php?t'
-                                target="_blank"
-                            >Buscar meu cep</a>
-                            <input 
-                                {...register("zipcode")}
-                                name="zipcode" 
-                                placeholder='CEP (Apenas digitos)'
-                                value={zipcode}
-                                onChange={(e) => setZipcode(e.target.value)}
-                                onKeyUp={handleGenerateAddress}
-                            />
-                            <span>O Cep deve conter apenas<br />8 digitos</span>
-                            <div className="address">
-                                <input 
-                                    {...register("street")}
-                                    name="street" 
-                                    placeholder='Logradouro'
-                                    value={street}
-                                    onChange={(e) => setStreet(e.target.value)}
-                                />
-                                <input 
-                                    {...register("number")}
-                                    name="number" 
-                                    placeholder='Número'
-                                />
-                                <input
-                                    {...register("complement")}
-                                    name="complement" 
-                                    placeholder='Complemento'
-                                />
-                                <input 
-                                    {...register("city")}
-                                    name="city" 
-                                    placeholder='Cidade'
-                                    value={city}
-                                    onChange={(e) => setCity(e.target.value)}
-                                />
+                <AlertModal 
+                    isOpen={modalIsOpen}
+                    subtitle={modalSubTitle}
+                    title={modalTitle}
+                    click={() => handleModalNavigation(modalReload)}
+                />
+                <div className={backgroundClass}>
+                    <h1>Dados Cadastrais</h1>
+                    <form onSubmit={handleSubmit(onSubFunction)}>
+                        <div className='PersonalData'>
+                            <h2>Dados Pessoais</h2>
+                            <div className='formPlaceOne'>
+                                <div className='emailPlace'>
+                                    <input 
+                                        placeholder='Nome Completo'
+                                        {...register("name")}
+                                        name="name" 
+                                    />
+                                    <input 
+                                        placeholder='Email' 
+                                        {...register("email")}
+                                        name="email" 
+                                    />
+                                </div>
+                                <div className='passwordPlace'>
+                                    <input 
+                                        type="password" 
+                                        placeholder='Senha'
+                                        {...register("password_hash")}
+                                        name="password_hash" 
+                                    />
+                                    <input 
+                                        type="password" 
+                                        placeholder='Confirme sua senha'
+                                        {...register("passwordConfirm")}
+                                        name="passwordConfirm" 
+                                    />
+                                    <span>A senha com pelo menos<br />8 caracteres</span>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <Button 
-                        setColor='#0192d5'
-                        setFontColor='#ffffff'
-                        setSize='huge'
-                        type='submit'
-                    >Enviar</Button>
-                </form>
+                        <div className='AddressData'>
+                            <h2>Endereço</h2>
+                            <div className='formPlaceTwo'>
+                                <a 
+                                    href='https://buscacepinter.correios.com.br/app/endereco/index.php?t'
+                                    target="_blank"
+                                >Buscar meu cep</a>
+                                <input 
+                                    {...register("zipcode")}
+                                    name="zipcode" 
+                                    placeholder='CEP (Apenas digitos)'
+                                    value={zipcode}
+                                    onChange={(e) => setZipcode(e.target.value)}
+                                    onKeyUp={handleGenerateAddress}
+                                />
+                                <span>O Cep deve conter apenas<br />8 digitos</span>
+                                <div className="address">
+                                    <input 
+                                        {...register("street")}
+                                        name="street" 
+                                        placeholder='Logradouro'
+                                        value={street}
+                                        onChange={(e) => setStreet(e.target.value)}
+                                    />
+                                    <input 
+                                        {...register("number")}
+                                        name="number" 
+                                        placeholder='Número'
+                                    />
+                                    <input
+                                        {...register("complement")}
+                                        name="complement" 
+                                        placeholder='Complemento'
+                                    />
+                                    <input 
+                                        {...register("city")}
+                                        name="city" 
+                                        placeholder='Cidade'
+                                        value={city}
+                                        onChange={(e) => setCity(e.target.value)}
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                        <Button 
+                            setColor='#0192d5'
+                            setFontColor='#ffffff'
+                            setSize='huge'
+                            type='submit'
+                        >Enviar</Button>
+                    </form>
+                </div>
             </Container>
         </div>
     )
