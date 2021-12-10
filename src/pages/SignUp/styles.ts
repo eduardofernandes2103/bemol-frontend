@@ -18,7 +18,8 @@ const Container = styled.div`
         width: 12rem;
         height: 1.8rem;
         border-radius: 5px;
-        border: 1px solid #c4c4c4
+        border: 1px solid #c4c4c4;
+        padding-left: 0.5rem;
     }
 
     h1{
@@ -67,6 +68,7 @@ const Container = styled.div`
     
             a{
                 text-decoration: none;
+                margin-bottom: 1rem;
                 color: #0192d5;
             }
     

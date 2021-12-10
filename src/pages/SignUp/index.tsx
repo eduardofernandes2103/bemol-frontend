@@ -10,6 +10,8 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm } from 'react-hook-form'
 import { SignupModel } from '../../models/signup-models'
 import { useNavigate } from 'react-router-dom';
+import {toast, ToastContainer}  from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.min.css'; 
 
 
 const SignUp = () => {
@@ -42,12 +44,6 @@ const SignUp = () => {
         zipcode: yup
             .string()
             .required("O Cep é obrigatório"),
-        street: yup
-            .string()
-            .required("Logradouro é obrigatório"),
-        city: yup
-            .string()
-            .required("Cidade é obrigatório"),
     });
 
     const {
@@ -58,10 +54,10 @@ const SignUp = () => {
         resolver: yupResolver(formSchema)
     });
 
-    const onSubFunction = ({name, email, password_hash, zipcode, street, number, complement, city }: SignupModel) => {
-        const formatedNumber = Number(number)
-        const costumer = {name, email, password_hash, zipcode, street, formatedNumber, complement, city };
-        console.log("teste")
+    const onSubFunction = ({name, email, password_hash, zipcode, number, complement }: SignupModel) => {
+
+        const costumer = {name, email, password_hash, zipcode, street, number, complement, city };
+        console.log(street)
         customerApi
         .post("/customers", costumer)
         .then((response) => {
@@ -83,7 +79,7 @@ const SignUp = () => {
             }
         })
         .catch((_)=> {
-            console.log("Algo deu errado")
+            toast.error("Algo deu errado, reinicie a página e tente novamente")
         })
     }
 
@@ -110,9 +106,18 @@ const SignUp = () => {
         }
     }
 
+    const handleToastify = () => {
+        toast.error(errors.name?.message)
+        toast.error(errors.email?.message)
+        toast.error(errors.password_hash?.message)
+        toast.error(errors.passwordConfirm?.message)
+        toast.error(errors.zipcode?.message)
+    }
+
     return (
         <div>
             <Header backToHomeLink={true} />
+            <ToastContainer />
             <Container>
                 <AlertModal 
                     isOpen={modalIsOpen}
@@ -204,6 +209,7 @@ const SignUp = () => {
                             setFontColor='#ffffff'
                             setSize='huge'
                             type='submit'
+                            click={() => handleToastify()}
                         >Enviar</Button>
                     </form>
                 </div>
