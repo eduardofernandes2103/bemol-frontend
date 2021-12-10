@@ -1,12 +1,17 @@
+import AlertModal from '../../components/AlertModal'
 import BackImg from '../../assets/bemol-shop.jpg'
+import Button from '../../components/Button'
 import Container from './styles'
 import Header from '../../components/Header'
 import { useState } from 'react'
-import Button from '../../components/Button'
+import { useNavigate } from 'react-router-dom';
 
 const Home = () => {
+    const navigate  = useNavigate()
     const [values, setValues] = useState("");
     const [tags, setTags] = useState<string[]>([]);
+    const [backgroundClass, setBackgroundClass] = useState<string>("opacityOff")
+    const [modalIsOpen, setModalIsOpen] = useState<boolean>(false)
 
     const handlePaste = (e: any, ecurr: any) => {
         let paste;
@@ -115,55 +120,77 @@ const Home = () => {
         )     
     }
 
+    const handleModalNavigation = () => {
+        document.location.reload()
+    }
+
+    const handleSentInvites = () => {
+        if(tags.length > 0 && isAllValid(tags) === 0){
+            setBackgroundClass("opacityOn")
+            setModalIsOpen(true)
+        }
+    }
+
     return (
         <div>
             <Header />
             <Container>
-                <div>
-                    <img src={BackImg} alt="" />
+                <div className='alertModalDiv'>
+                    <AlertModal 
+                        isOpen={modalIsOpen}
+                        subtitle="Os convites serão enviados para os respectivos emails"
+                        title="Tudo Certo!"
+                        click={() => handleModalNavigation()}
+                    />
                 </div>
-                <div className='shareModal'>
-                    <h2>Convide seus amigos</h2>
+                <div className={backgroundClass}>
+                    <div>
+                        <img src={BackImg} alt="" />
+                    </div>
+                    <div className='shareModal'>
+                        <h2>Convide seus amigos</h2>
 
-                    <span>Insira os emails no campo abaixo</span>
-                    
-                    <div className='inputContainer'>
-                        {tags.map((tag, i) => (
-                            handleValidate(tag) === true ? (
-                                <div className="validTagContainer" key={i}>
-                                    <p>{tag} <span onClick={() => handleRemoveTag(tag)}> x </span></p>
-                                </div>
-                            ) : (
-                                <div className="invalidTagContainer" key={i}>
-                                    <p>                                           
-                                        {tag} <span onClick={() => handleRemoveTag(tag)}> x </span>
-                                    </p>
-                                </div>
-                            )
-                        ))}
-                            
-                        <div>
-                            <input 
-                                type="text"
-                                onPaste={(e) => handlePaste(e, e.clipboardData.getData("Text"))}
-                                value={values}
-                                onChange={(e) => setValues(e.target.value)}
-                                onKeyUp={handleUpdateTags}
-                                onKeyDown={(e) => e.key === 'Enter' || e.key === ',' || e.key === ' ' && e.preventDefault()}
-                                onKeyPress={(e) => e.key === 'Enter' || e.key === ',' || e.key === ' ' && e.preventDefault()}
-                            />
+                        <span>Insira os emails no campo abaixo</span>
+                        
+                        <div className='inputContainer'>
+                            {tags.map((tag, i) => (
+                                handleValidate(tag) === true ? (
+                                    <div className="validTagContainer" key={i}>
+                                        <p>{tag} <span onClick={() => handleRemoveTag(tag)}> x </span></p>
+                                    </div>
+                                ) : (
+                                    <div className="invalidTagContainer" key={i}>
+                                        <p>                                           
+                                            {tag} <span onClick={() => handleRemoveTag(tag)}> x </span>
+                                        </p>
+                                    </div>
+                                )
+                            ))}
+                                
+                            <div>
+                                <input 
+                                    type="text"
+                                    onPaste={(e) => handlePaste(e, e.clipboardData.getData("Text"))}
+                                    value={values}
+                                    onChange={(e) => setValues(e.target.value)}
+                                    onKeyUp={handleUpdateTags}
+                                    onKeyDown={(e) => e.key === 'Enter' || e.key === ',' || e.key === ' ' && e.preventDefault()}
+                                    onKeyPress={(e) => e.key === 'Enter' || e.key === ',' || e.key === ' ' && e.preventDefault()}
+                                />
+                            </div>
                         </div>
-                    </div>
 
-                    <div className={"error-container"}>
-                        {isAllValid(tags) > 0 && handleRenderErrorMsg()}
-                    </div>
+                        <div className={"error-container"}>
+                            {isAllValid(tags) > 0 && handleRenderErrorMsg()}
+                        </div>
 
-                    <Button
-                        setColor='#0192d5' 
-                        setFontColor='#ffffff'
-                        setSize='giant'
-                    >Enviar</Button>
+                        <Button
+                            setColor='#0192d5' 
+                            setFontColor='#ffffff'
+                            setSize='giant'
+                            click={() => handleSentInvites()}
+                        >Enviar</Button>
+                    </div>
                 </div>
             </Container>
         </div>

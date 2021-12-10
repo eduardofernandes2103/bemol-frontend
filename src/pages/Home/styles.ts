@@ -11,6 +11,21 @@ const Container = styled.div`
     height: 100vh;
     width: 100vw;
 
+    .alertModalDiv {
+        position: absolute;
+        top: 500px;
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+        align-content: center;
+    }
+
+    .opacityOn{
+        background: #c4c4c4;
+        opacity: 0.5;
+    }
+
     img{
         position: absolute;
         left: 0px;
